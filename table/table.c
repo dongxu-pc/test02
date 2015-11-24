@@ -6,16 +6,11 @@
  ************************************************************************/
 
 #include<stdio.h>
-#include "slice.h"
-#include "env.h"
-#ifndef __SSTABLE_CUDA_INCLUDE_TABLE_C__
-#define __SSTABLE_CUDA_INCLUDE_TABLE_C__
 
 int readFooter(struct sequentialFile* psFile,struct Footer* footer)
 {
 	char footerSpace[48];
-	readSFile(48,psFile,)
-	
+	//readSFile(48,psFile,)
+	return 0;
 }
 
-#endif

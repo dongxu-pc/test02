@@ -5,31 +5,31 @@
 	> Created Time: 2015年11月21日 星期六 10时21分46秒
  ************************************************************************/
 
-#ifndef __SSTABLE_CUDA_TABLE_TABLE_H__
-#define __SSTABLE_CUDA_TABLE_TABLE_H__
-
 #include "stdio.h"
 #include "stdint.h"
 #include "stdlib.h"
 
-#include "env.h"
+#include "env/env.h"
 
-typedef struct BlockHandle{
+#ifndef __SSTABLE_CUDA_TABLE_TABLE_H__
+#define __SSTABLE_CUDA_TABLE_TABLE_H__
+
+typedef struct {
 	uint64_t offset;
 	uint64_t size;
-};
+} BlockHandle;
 
-typedef struct Footer{
+typedef struct {
 	char magicNum[8];
 	BlockHandle metaIndexHandle;
 	BlockHandle dataIndexHandle;
-} *pFooter;
+} Footer,*pFooter;
 
-typedef struct Block{
+typedef struct {
 	const char* data_;
 	size_t size;
 	uint32_t restart_offset;
 	size_t restartNum;
-} *pBlock;
-
+} Block, *pBlock;
+int readFooter(sequentialFile* psFile,Footer* footer);
 #endif

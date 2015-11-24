@@ -7,7 +7,11 @@
 
 #include <stdio.h>
 #include "stdlib.h"
+
+#include "env/env.h"
+#include "slice.h"
 #include "c.h"
+#include "table/table.h"
 
 int main()
 {
@@ -20,7 +24,7 @@ int main()
 	char a[] = "src.ldb";
 	Slice filename;
 	setSlice(&filename,a,strlen(a));
-	struct sequentialFile* psFile = (struct sequentialFile*)malloc(sizeof(struct sequentialFile));
+	sequentialFile* psFile = (sequentialFile*)malloc(sizeof(sequentialFile));
 	setSequentialFile(psFile,fp,&filename);
 
 	fclose(fp); 

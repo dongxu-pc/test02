@@ -8,8 +8,8 @@
 #include "stdint.h"
 #include "stddef.h"
 
-#ifndef __SSTABLE_CUDA_INCLUDE_FORMAT_H__
-#define __SSTABLE_CUDA_INCLUDE_FORMAT_H__
+#ifndef __SSTABLE_CUDA_TABLE_FORMAT_H__
+#define __SSTABLE_CUDA_TABLE_FORMAT_H__
 
 typedef struct varint{
 	char* value_;

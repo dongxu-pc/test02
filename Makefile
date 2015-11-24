@@ -43,7 +43,7 @@ CXXPPFLAGS :=
 #指定搜索路径, 也可用include指定具体文件路径
 #编译时使用
 # The include files ( C and C++ common).
-INCLUDES := -I./include
+INCLUDES := -I./include -I.
 # 指定函数库搜索路径DIRECTORY 搜寻库文件(*.a)的路径,加入需要的库搜索路径 功能同–l，由用户指定库的路径，否则编译器将只在标准库的目录找。
 #连接时使用 LIBDIRS := -L./lib
 LIBDIRS :=
@@ -65,7 +65,7 @@ ifeq '${OS_NAME}' 'SunOS'
 endif
 
 # 指定SRC_DIR 源代码文件路径./src  ./src2   src2/src3
-SRC_DIR := . ./app ./env ./include ./table
+SRC_DIR := . ./env ./table ./include ./app
 #指定支持的源代码扩展名 SFIX     := .out .a .ln  .o  .c  .cc .C  .p  .f  .F 
 #.r  .y  .l  .s  .S  .mod  .sym  .def  .h  .info  .dvi  .tex  .texinfo  .texi
 #.txinfo  .w  .ch .web  .sh  .elc  .el
