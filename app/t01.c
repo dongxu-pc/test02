@@ -23,9 +23,12 @@ int main()
 	}
 	char a[] = "src.ldb";
 	Slice filename;
+	Footer footer;
 	setSlice(&filename,a,strlen(a));
 	sequentialFile* psFile = (sequentialFile*)malloc(sizeof(sequentialFile));
 	setSequentialFile(psFile,fp,&filename);
+	
+	readFooter(psFile,&footer);
 
 	fclose(fp); 
 	printf("Hello World!\n");
