@@ -16,9 +16,9 @@ typedef struct{
     size_t size_;	
 } Slice,*pslice_;
 
-int setSlice(char* data,Slice* pslice,size_t n)
+int setSlice(Slice* pslice,char* data,size_t n)
 {
-    pSlice->data_ = data;
+    pslice->data_ = data;
     pslice->size_ = n;
     if(data == NULL || pslice == NULL)
         return -1;
