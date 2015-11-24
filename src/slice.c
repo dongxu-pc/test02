@@ -9,3 +9,8 @@ int setSlice(Slice* pslice,char* data,size_t n)
         return -1;
     return n;
 }
+
+char* getSliceData(Slice* pslice)
+{
+    return pslice->data_;
+}

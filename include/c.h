@@ -7,7 +7,7 @@
 #ifndef __SSTABLE_CUDA_INCLUDE_C_H__
 #define __SSTABLE_CUDA_INCLUDE_C_H__
 
-#define MAGICNUMBER 0xdb4775248b80fb57ull
+#define MAGICNUMBER 0xdb4775248b80fb57
 
 #endif
 

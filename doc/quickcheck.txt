@@ -10,3 +10,40 @@ env/env.h:
   long getFilesize(sequentialFile* psFile);
   
 table/table.h:
+  typedef struct {
+	  uint64_t offset;
+	  uint64_t size;
+  } BlockHandle;
+
+  typedef struct {
+	  BlockHandle metaIndexHandle;
+	  BlockHandle dataIndexHandle;
+  } Footer,*pFooter;
+
+  typedef struct {
+	  const char* data_;
+	  size_t size;
+	  uint32_t restart_offset;
+	  size_t restartNum;
+   } Block, *pBlock;
+   int readFooter(sequentialFile* psFile,Footer* footer);
+
+
+slice.h:
+  typedef struct{
+    const char* data_;
+    size_t size_;	
+  } Slice,*pslice_;
+
+  int setSlice(Slice* pslice,char* data,size_t n);
+
+format.h:
+  typedef struct varint{
+	 char* value_;
+	 int size;
+  }*pvint;
+
+  inline uint32_t decodeFixed32(const char* ptr);
+  inline uint64_t decodeFixed64(const char* ptr);
+  inline uint64_t  varToint64(struct varint vint);
+
