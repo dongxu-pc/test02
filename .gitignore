@@ -32,4 +32,5 @@
 *.dSYM/
 
 # dirtory
-bin
+/bin
+
