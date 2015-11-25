@@ -34,4 +34,4 @@
 # dirtory
 /bin
 *.d
-
+/.vscode
