@@ -15,22 +15,22 @@
 #define __SSTABLE_CUDA_TABLE_TABLE_H__
 
 typedef struct {
-	uint64_t offset;
-	uint64_t size;
+	uint64_t offset_;
+	uint64_t size_;
 } BlockHandle;
 
 typedef struct {
-	char magicNum[8];
 	BlockHandle metaIndexHandle;
 	BlockHandle dataIndexHandle;
-} Footer,*pFooter;
+} Footer;
 
 typedef struct {
 	const char* data_;
-	size_t size;
+	size_t size_;
 	uint32_t restart_offset;
 	size_t restartNum;
-} Block, *pBlock;
-int readFooter(sequentialFile* psFile,Footer* footer);
+} Block;
+int readFooter(sequentialFile* psFile,Footer* pfooter);
+void showFooter(const Footer* pfooter);
 #endif
 

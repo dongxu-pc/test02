@@ -14,9 +14,13 @@
 typedef struct{
     const char* data_;
     size_t size_;	
-} Slice,*pslice_;
+} Slice;
 
 int setSlice(Slice* pslice,char* data,size_t n);
+
+void showSlice(const Slice* pslice);
+
+int sliceToFile(const Slice* pslice,const char* filename);
 
 #endif
 

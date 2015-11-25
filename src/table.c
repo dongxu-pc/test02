@@ -11,35 +11,59 @@
 #include "env.h"
 #include "c.h"
 #include "format.h"
+#include "debtools.h"
 
-int decodeFooter(Slice* input);
+int decodeFooter(Footer* pfooter,const Slice* input);
+void showFooter(const Footer* pfooter);
 
-int readFooter(sequentialFile* psFile,Footer* footer)
+int readFooter(sequentialFile* psFile,Footer* pfooter)
 {
 	char footerSpace[48];
 	long filesize;
 	Slice r;
+	int i;
 	filesize = getFilesize(psFile);
 	readSFile(48,filesize-48,psFile,&r,footerSpace);
-	decodeFooter(&r);
-	
+	decodeFooter(pfooter,&r);
+	for(i = 0;i < 48;i++){
+		printXchar(r.data_[i]);
+	}
 	
 	printf("file size = %ld,footersize = %d\n",filesize,r.size_);
 	
 	return 0;
 }
 
-int decodeFooter(Slice* input)
+int decodeFooter(Footer* pfooter,const Slice* input)
 {
-	const char* magic_ptr = input->data_ + 40;
-	const uint64_t magic_lo = (uint64_t)decodeFixed32(magic_ptr);
-	const uint64_t magic_hi = (uint64_t)decodeFixed32(magic_ptr+4);
-	const uint64_t magic = (magic_hi << 32) | (magic_lo);
+	const unsigned char* magic_ptr = input->data_;
+	const uint64_t magic = decodeFixed64(magic_ptr+40);
 	if(magic != MAGICNUMBER){
 		printf("This is not a ldb file(bad magic).\n");
 		exit(-1);
 	}
 	printf("Success magic!\n");
+	varint varint;
+	varint.value_ = magic_ptr;
+	varint.size_ = 0;
+	pfooter->metaIndexHandle.offset_ = varToint64(&varint);
+	printf("vint offset = %d\n",varint.size_);
+	pfooter->metaIndexHandle.size_ = varToint64(&varint);
+	printf("vint offset = %d\n",varint.size_);
+	pfooter->dataIndexHandle.offset_ = varToint64(&varint);
+	printf("vint offset = %d\n",varint.size_);
+	pfooter->dataIndexHandle.size_ = varToint64(&varint);
+	printf("vint offset = %d\n",varint.size_);
+	
+	showFooter(pfooter);
 	
 	return 0;
+}
+
+void showFooter(const Footer* pfooter)
+{
+	printf("dateIndexHandle(%llu,%llu).\n",pfooter->dataIndexHandle.offset_,
+	   pfooter->dataIndexHandle.size_);
+	printf("metaIndexHandle(%llu,%llu).\n",pfooter->metaIndexHandle.offset_,
+	   pfooter->metaIndexHandle.size_);
 }

@@ -11,14 +11,14 @@
 #ifndef __SSTABLE_CUDA_TABLE_FORMAT_H__
 #define __SSTABLE_CUDA_TABLE_FORMAT_H__
 
-typedef struct varint{
-	char* value_;
-	int size;
-}*pvint;
+typedef struct{
+	const unsigned char* value_;
+	int size_;
+} varint;
 
-inline uint32_t decodeFixed32(const char* ptr);
-inline uint64_t decodeFixed64(const char* ptr);
-inline uint64_t  varToint64(struct varint vint);
+inline uint32_t decodeFixed32(const unsigned char* ptr);
+inline uint64_t decodeFixed64(const unsigned char* ptr);
+inline uint64_t  varToint64(varint* vint);
 
 #endif
 

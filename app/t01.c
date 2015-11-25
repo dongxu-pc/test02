@@ -13,6 +13,8 @@
 #include "c.h"
 #include "table.h"
 
+#include "debtools.h"
+
 int main()
 {
 	FILE* fp;
