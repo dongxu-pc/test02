@@ -31,6 +31,7 @@ typedef struct {
 	size_t restartNum;
 } Block;
 int readFooter(sequentialFile* psFile,Footer* pfooter);
+
 void showFooter(const Footer* pfooter);
 #endif
 

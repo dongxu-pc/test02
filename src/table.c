@@ -14,7 +14,6 @@
 #include "debtools.h"
 
 int decodeFooter(Footer* pfooter,const Slice* input);
-void showFooter(const Footer* pfooter);
 
 int readFooter(sequentialFile* psFile,Footer* pfooter)
 {

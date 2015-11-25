@@ -27,10 +27,14 @@ int main()
 	Slice filename;
 	Footer footer;
 	setSlice(&filename,a,strlen(a));
-	sequentialFile* psFile = (sequentialFile*)malloc(sizeof(sequentialFile));
+	const sequentialFile* psFile = (sequentialFile*)malloc(sizeof(sequentialFile));
 	setSequentialFile(psFile,fp,&filename);
 	
 	readFooter(psFile,&footer);
+	
+	showFooter(&footer);
+	
+	//readDataIndexBlock(footer)
 
 	fclose(fp); 
 	printf("Hello World!\n");
