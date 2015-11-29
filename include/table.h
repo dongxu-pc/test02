@@ -10,6 +10,7 @@
 #include "stdlib.h"
 
 #include "env.h"
+#include "format.h"
 
 #ifndef __SSTABLE_CUDA_TABLE_TABLE_H__
 #define __SSTABLE_CUDA_TABLE_TABLE_H__
@@ -30,8 +31,24 @@ typedef struct {
 	uint32_t restart_offset;
 	size_t restartNum;
 } Block;
+
+typedef struct{
+	char* key;
+	varint kenlen;
+	uint64_t offset_;/* block offset */
+} IndexBlockEntry;
+
+typedef struct{
+	char* key;
+	varint kenlen;
+	uint64_t offset_;
+} RestartEntry;
+
 int readFooter(sequentialFile* psFile,Footer* pfooter);
 
 void showFooter(const Footer* pfooter);
+
+int readBlock(sequentialFile* psFile,Block* block);
+
 #endif
 

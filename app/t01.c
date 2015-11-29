@@ -34,7 +34,8 @@ int main()
 	
 	showFooter(&footer);
 	
-	//readDataIndexBlock(footer)
+	
+	readDataIndexBlock(psFile,footer);
 
 	fclose(fp); 
 	printf("Hello World!\n");
