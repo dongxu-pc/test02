@@ -27,7 +27,7 @@ typedef struct{
  /**
    * 自psFile中读取n字节的数据，结果存储在result中，
    **/
- int readSFile(size_t n,long start,sequentialFile* psFile,Slice* result,char* scratch);
+ int readSFile(size_t n,long start,sequentialFile* psFile,char* scratch);
 
 /**
  * 获取文件的大小

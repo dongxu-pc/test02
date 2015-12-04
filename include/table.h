@@ -15,9 +15,14 @@
 #ifndef __SSTABLE_CUDA_TABLE_TABLE_H__
 #define __SSTABLE_CUDA_TABLE_TABLE_H__
 
+/*
+ * blockHandle的分为文件中的偏移，大小和类型
+ * type 0,1,2,3分别代表datablock，metablock，dataindexblock，metaindexblock
+ */
 typedef struct {
 	uint64_t offset_;
 	uint64_t size_;
+	uint8_t type_;
 } BlockHandle;
 
 typedef struct {
@@ -48,7 +53,8 @@ int readFooter(sequentialFile* psFile,Footer* pfooter);
 
 void showFooter(const Footer* pfooter);
 
-int readBlock(sequentialFile* psFile,Block* block);
+int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle);
+
 
 #endif
 

@@ -26,6 +26,8 @@ int main()
 	char a[] = "src.ldb";
 	Slice filename;
 	Footer footer;
+	Block dataBlock;
+	
 	setSlice(&filename,a,strlen(a));
 	const sequentialFile* psFile = (sequentialFile*)malloc(sizeof(sequentialFile));
 	setSequentialFile(psFile,fp,&filename);
@@ -34,8 +36,7 @@ int main()
 	
 	showFooter(&footer);
 	
-	
-	readDataIndexBlock(psFile,footer);
+	readBlock(psFile,&dataBlock,footer.dataIndexHandle);
 
 	fclose(fp); 
 	printf("Hello World!\n");
