@@ -12,6 +12,23 @@
 
 #include "coding.h"
 
+inline uint32_t decodeFixed32(const unsigned char* ptr)
+{
+	return (
+			((uint32_t)(ptr[0]))
+			|(((uint32_t)(ptr[1])) << 8)
+			|(((uint32_t)(ptr[2])) << 16)
+			|(((uint32_t)(ptr[3])) << 24)
+			);
+}
+
+inline uint64_t decodeFixed64(const unsigned char* ptr)
+{
+	uint64_t lo = decodeFixed32(ptr);
+	uint64_t hi = decodeFixed32(ptr+4);
+	return ((hi << 32)|lo);
+}
+
 void encodeFixed32(char* buf,uint32_t value)
 {
 	buf[0] = value & 0xff;

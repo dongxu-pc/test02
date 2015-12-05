@@ -13,10 +13,12 @@
 #include "table.h"
 #include "env.h"
 #include "c.h"
+#include "coding.h"
 #include "format.h"
 #include "debtools.h"
 
 int decodeFooter(Footer* pfooter,const Slice* input);
+inline int checkBlockCrc32(const uint8_t* data,size_t n);
 
 int readFooter(sequentialFile* psFile,Footer* pfooter)
 {
@@ -84,12 +86,30 @@ int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle)
 	printf("Read Block,offset %llu,size %llu\n",blockHandle.offset_,blockHandle.size_);
 	setSlice(&r,block->data_,blockHandle.size_);
 	
+	
 	for(i = 0;i < blockHandle.size_;i++){
 		printXchar(r.data_[i]);
 	}
+	checkBlockCrc32(block->data_,blockHandle.size_);
 	
 	printf("Read Block\n");
 	
 	return 0;
 }
 
+int decodeBlock(Block* pblock)
+{
+	
+}
+
+inline int checkBlockCrc32(const uint8_t* data,size_t n)
+{
+	const uint32_t crc = crcUnmask(decodeFixed32(data+n-4));
+	const uint32_t actual = crcValue(data,n-4);
+	
+	if(actual != crc){
+		printf("Check Crc,error!\n");
+		return 1;
+	}
+	return 0;
+}

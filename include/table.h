@@ -54,7 +54,7 @@ int readFooter(sequentialFile* psFile,Footer* pfooter);
 void showFooter(const Footer* pfooter);
 
 int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle);
-
+int decodeBlock(Block* pblock);
 
 #endif
 

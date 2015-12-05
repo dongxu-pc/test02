@@ -11,6 +11,10 @@
 #ifndef __SSTABLE_CUDA_INCLUDE_CODING_H__
 #define __SSTABLE_CUDA_INCLUDE_CODING_H__
 
+inline uint32_t decodeFixed32(const unsigned char* ptr);
+
+inline uint64_t decodeFixed64(const unsigned char* ptr);
+
 void encodeFixed32(char* buf,uint32_t value);
 
 void encodeFixed64(char* buf,uint64_t value);

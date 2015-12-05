@@ -16,8 +16,7 @@ typedef struct{
 	int size_;
 } varint;
 
-inline uint32_t decodeFixed32(const unsigned char* ptr);
-inline uint64_t decodeFixed64(const unsigned char* ptr);
+
 inline uint64_t  varToint64(varint* vint);
 
 #endif
