@@ -66,3 +66,8 @@ void showFooter(const Footer* pfooter)
 	printf("metaIndexHandle(%llu,%llu).\n",pfooter->metaIndexHandle.offset_,
 	   pfooter->metaIndexHandle.size_);
 }
+
+int readBlock(sequentialFile* psFile,Block* block)
+{
+	
+}
