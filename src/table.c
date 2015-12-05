@@ -6,6 +6,9 @@
  ************************************************************************/
 
 #include<stdio.h>
+#include "stdlib.h"
+#include "stdint.h"
+#include "stddef.h"
 
 #include "table.h"
 #include "env.h"
@@ -22,14 +25,14 @@ int readFooter(sequentialFile* psFile,Footer* pfooter)
 	Slice r;
 	int i;
 	filesize = getFilesize(psFile);
-	readSFile(48,filesize-48,psFile,&r,footerSpace);
+	readSFile(48,filesize-48,psFile,footerSpace);
+	setSlice(&r,footerSpace,48);
 	decodeFooter(pfooter,&r);
 	for(i = 0;i < 48;i++){
 		printXchar(r.data_[i]);
 	}
-	
 	printf("file size = %ld,footersize = %d\n",filesize,r.size_);
-	
+	//free(r.data_);
 	return 0;
 }
 
@@ -67,7 +70,26 @@ void showFooter(const Footer* pfooter)
 	   pfooter->metaIndexHandle.size_);
 }
 
-int readBlock(sequentialFile* psFile,Block* block)
+int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle)
 {
+	//char str_crc[];
+	printf("Read Block,offset %llu,size %llu\n",blockHandle.offset_,blockHandle.size_);
+	Slice r;
+	int i;
+	block->data_ = (uint8_t*) malloc(blockHandle.size_);
+	if(block->data_ == NULL){
+		block->data_ = (uint8_t*) malloc(blockHandle.size_);
+	}
+	readSFile(blockHandle.size_,blockHandle.offset_,psFile,block->data_);
+	printf("Read Block,offset %llu,size %llu\n",blockHandle.offset_,blockHandle.size_);
+	setSlice(&r,block->data_,blockHandle.size_);
 	
+	for(i = 0;i < blockHandle.size_;i++){
+		printXchar(r.data_[i]);
+	}
+	
+	printf("Read Block\n");
+	
+	return 0;
 }
+
