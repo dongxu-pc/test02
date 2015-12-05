@@ -34,7 +34,7 @@ typedef struct {
 	const char* data_;
 	size_t size_;
 	uint32_t restart_offset;
-	size_t restartNum;
+	uint32_t restartNum;
 } Block;
 
 typedef struct{

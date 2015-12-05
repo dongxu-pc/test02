@@ -1,6 +1,15 @@
 
 #include "debtools.h"
 
+void printXstring(const unsigned char* str,size_t n)
+{
+	int i;
+	for(i = 0;i < n;i++){
+		printXchar(str[i]);
+	}
+	printf("\n");
+}
+
 inline void printXchar(unsigned char a)
 {
 	hexcase(a >> 4);

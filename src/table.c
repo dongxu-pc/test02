@@ -82,24 +82,29 @@ int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle)
 	if(block->data_ == NULL){
 		block->data_ = (uint8_t*) malloc(blockHandle.size_);
 	}
-	readSFile(blockHandle.size_,blockHandle.offset_,psFile,block->data_);
+	readSFile(blockHandle.size_+5,blockHandle.offset_,psFile,block->data_);
 	printf("Read Block,offset %llu,size %llu\n",blockHandle.offset_,blockHandle.size_);
 	setSlice(&r,block->data_,blockHandle.size_);
 	
+	block->size_ = blockHandle.size_;
+	printXstring(r.data_,blockHandle.size_+5);
+
+	checkBlockCrc32(block->data_,blockHandle.size_+5);
 	
-	for(i = 0;i < blockHandle.size_;i++){
-		printXchar(r.data_[i]);
-	}
-	checkBlockCrc32(block->data_,blockHandle.size_);
+	/*decodeBlock(block);*/
+	block->restartNum = decodeFixed32( (unsigned char*)(block->data_ + block->size_ - 4) );
+	block->restart_offset = block->size_ - (block->restartNum+1)*4;
+	
+	printf("restartNum %ld,restart offset %ld\n",block->restartNum,block->restart_offset);
 	
 	printf("Read Block\n");
 	
 	return 0;
 }
 
-int decodeBlock(Block* pblock)
+inline int decodeBlock(Block* pblock)
 {
-	
+	return 0;
 }
 
 inline int checkBlockCrc32(const uint8_t* data,size_t n)
