@@ -7,6 +7,7 @@
 
 #include "stdint.h"
 #include "stddef.h"
+#include "string.h"
 #include "assert.h"
 
 #include "format.h"
@@ -28,3 +29,29 @@ inline uint64_t  varToint64(varint* vint)
 	return value;
 }
 
+inline size_t parseKey(const Slice* key,Slice* key1,Slice* key2)
+{
+	int i = 0;
+	if(key == NULL){
+		return -1;
+	}
+	key1->data_ = (unsigned char *)malloc(key->size_ - 8);
+	key1->size_ = key->size_ - 8;
+	key2->data_ = (unsigned char *)malloc(8);
+	key2->data_ = 8;
+	for(i ;i < key1->size_;i++){
+		key1->data_[i] = key->data_[i];
+	}
+	for(i = 0;i < 8;i++){
+		key2->data_[i] = key->data_[key1->size_ + i];
+	}
+	
+	return 0;
+}
+
+inline size_t comparaKey(Slice key1,Slice key2){
+	if(key1.size_>key2.size_){
+		if(strcmp(key1.data_,key2.data_))
+	}
+	
+}

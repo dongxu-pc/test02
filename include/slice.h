@@ -12,15 +12,15 @@
 #define __SSTABLE_CUDA_INCLUDE_SLICE_H__
 
 typedef struct{
-    const char* data_;
+    const unsigned char* data_;
     size_t size_;	
 } Slice;
 
-int setSlice(Slice* pslice,char* data,size_t n);
+int setSlice(Slice* pslice,unsigned char* data,size_t n);
 
 void showSlice(const Slice* pslice);
 
-int sliceToFile(const Slice* pslice,const char* filename);
+int sliceToFile(const Slice* pslice,const unsigned char* filename);
 
 #endif
 

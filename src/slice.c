@@ -3,7 +3,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-int setSlice(Slice* pslice,char* data,size_t n)
+int setSlice(Slice* pslice,unsigned char* data,size_t n)
 {
     pslice->data_ = data;
     pslice->size_ = n;
@@ -25,7 +25,7 @@ void showSlice(const Slice* pslice)
     }
 }
 
-int sliceToFile(const Slice* pslice,const char* filename)
+int sliceToFile(const Slice* pslice,const unsigned char* filename)
 {
     FILE* fp;
     fp = fopen(filename,"r");
