@@ -10,12 +10,12 @@
 #include "stdio.h"
 
 #include "slice.h"
- 
+
 #ifndef __SSTABLE_CUDA_INCLUDE_ENV_H__
 #define __SSTABLE_CUDA_INCLUDE_ENV_H__
 
 typedef struct{
-	 const Slice* filename_;
+	 Slice* filename_;
 	 FILE* file_;
  } sequentialFile,*psFile_;
  
@@ -27,12 +27,11 @@ typedef struct{
  /**
    * 自psFile中读取n字节的数据，结果存储在result中，
    **/
- int readSFile(size_t n,long start,sequentialFile* psFile,char* scratch);
+ int readSFile(size_t n,long start,const sequentialFile* psFile,unsigned char* scratch);
 
 /**
  * 获取文件的大小
  */
-long getFilesize(sequentialFile* psFile);
+long getFilesize(const sequentialFile* psFile);
  
 #endif
-

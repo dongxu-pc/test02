@@ -22,10 +22,10 @@
  /**
    * 自psFile中读取n字节的数据，结果存储在result中，
    **/
- int readSFile(size_t n,long start,sequentialFile* psFile,char* scratch)
+ int readSFile(size_t n,long start,const sequentialFile* psFile,unsigned char* scratch)
  {
 	 fseek(psFile->file_,start,SEEK_SET);
-	 printf("Read Block,start %llu,size %llu\n",start,n);
+	 printf("Read Block,start %ld,size %ld\n",start,n);
 	 size_t r = fread_unlocked(scratch, 1, n, psFile->file_);
      /*setSlice(result,scratch, r);*/
 	 if (r < n) {
@@ -43,7 +43,7 @@
 /**
  * 获取文件的大小
  */
-long getFilesize(sequentialFile* psFile)
+long getFilesize(const sequentialFile* psFile)
 {
 	if(psFile->file_ == NULL){
 		printf("getFileSize Failed!\n");

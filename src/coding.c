@@ -9,8 +9,41 @@
 #include "stdlib.h"
 
 #include "stdint.h"
+#include "assert.h"
 
 #include "coding.h"
+
+inline uint64_t decodeVarint(const unsigned char* ptr,size_t* offset)
+{
+	varint vint;
+	uint64_t value;
+	
+	vint.size_ = 0;
+	vint.value_ = ptr+(*offset);
+	
+	value = varToint64(&vint);
+	
+	(*offset) += vint.size_;
+	//printf("value = %llu,offset = %d\n",value,*offset);
+	
+	return value;
+}
+
+inline uint64_t  varToint64(varint* vint)
+{
+	uint64_t value = 0;
+	int i = 0;
+	while((vint->value_[vint->size_] & 0x80) == 0x80){
+		value += ((uint64_t)(vint->value_[vint->size_]&0x7F)) << (7*i);
+		vint->size_++;
+		i++;
+		assert(i < 8);
+	}
+	value += ((uint64_t)(vint->value_[vint->size_]&0x7F)) << (7*i);
+	vint->size_++;
+	
+	return value;
+}
 
 inline uint32_t decodeFixed32(const unsigned char* ptr)
 {
@@ -29,29 +62,29 @@ inline uint64_t decodeFixed64(const unsigned char* ptr)
 	return ((hi << 32)|lo);
 }
 
-void encodeFixed32(char* buf,uint32_t value)
+void encodeFixed32(unsigned char* buf,uint32_t value)
 {
-	buf[0] = value & 0xff;
-	buf[1] = (value >> 8) & 0xff;
-	buf[2] = (value >> 16) & 0xff;
-	buf[3] = (value >> 24) & 0xff;
+	buf[0] = (unsigned char) value & 0xff;
+	buf[1] = (unsigned char) (value >> 8) & 0xff;
+	buf[2] = (unsigned char) (value >> 16) & 0xff;
+	buf[3] = (unsigned char) (value >> 24) & 0xff;
 }
 
-void encodeFixed64(char* buf,uint64_t value)
+void encodeFixed64(unsigned char* buf,uint64_t value)
 {
-	buf[0] = value & 0xff;
-	buf[1] = (value >> 8) & 0xff;
-	buf[2] = (value >> 16) & 0xff;
-	buf[3] = (value >> 24) & 0xff;
-	buf[4] = (value >> 32) & 0xff;
-	buf[5] = (value >> 40) & 0xff;
-	buf[6] = (value >> 48) & 0xff;
-	buf[7] = (value >> 56) & 0xff;
+	buf[0] = (unsigned char) value & 0xff;
+	buf[1] = (unsigned char) (value >> 8) & 0xff;
+	buf[2] = (unsigned char) (value >> 16) & 0xff;
+	buf[3] = (unsigned char) (value >> 24) & 0xff;
+	buf[4] = (unsigned char) (value >> 32) & 0xff;
+	buf[5] = (unsigned char) (value >> 40) & 0xff;
+	buf[6] = (unsigned char) (value >> 48) & 0xff;
+	buf[7] = (unsigned char) (value >> 56) & 0xff;
 }
 
-void putFixed32(char* dst,uint32_t value)
+void putFixed32(unsigned char* dst,uint32_t value)
 {
-	char buf[sizeof(value)];
-	encodeFixed32(buf,value);
-	dst = buf;
+	if(dst == NULL)
+	    dst = (unsigned char*)malloc(4);
+	encodeFixed32(dst,value);
 }

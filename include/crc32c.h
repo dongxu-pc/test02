@@ -14,9 +14,7 @@
 extern uint32_t crcExtend(uint32_t init_crc, const uint8_t* data, size_t n);
 
 // Return the crc32c of data[0,n-1]
-inline uint32_t crcValue(const uint8_t* data, size_t n) {
-  return crcExtend(0, data, n);
-}
+inline uint32_t crcValue(const uint8_t* data, size_t n);
 
 static const uint32_t kMaskDelta = 0xa282ead8ul;
 
@@ -25,15 +23,9 @@ static const uint32_t kMaskDelta = 0xa282ead8ul;
 // Motivation: it is problematic to compute the CRC of a string that
 // contains embedded CRCs.  Therefore we recommend that CRCs stored
 // somewhere (e.g., in files) should be masked before being stored.
-inline uint32_t crcMask(uint32_t crc) {
-  // Rotate right by 15 bits and add a constant.
-  return ((crc >> 15) | (crc << 17)) + kMaskDelta;
-}
+inline uint32_t crcMask(uint32_t crc);
 
 // Return the crc whose masked representation is masked_crc.
-inline uint32_t crcUnmask(uint32_t masked_crc) {
-  uint32_t rot = masked_crc - kMaskDelta;
-  return ((rot >> 17) | (rot << 15));
-}
+inline uint32_t crcUnmask(uint32_t masked_crc);
 
 #endif

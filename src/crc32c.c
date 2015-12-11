@@ -268,6 +268,20 @@ static const uint32_t table3_[256] = {
   0x4a21617b, 0x9764cbc3, 0xf54642fa, 0x2803e842
 };
 
+inline uint32_t crcValue(const uint8_t* data, size_t n) {
+  return crcExtend(0, data, n);
+}
+
+inline uint32_t crcMask(uint32_t crc) {
+  // Rotate right by 15 bits and add a constant.
+  return ((crc >> 15) | (crc << 17)) + kMaskDelta;
+}
+
+inline uint32_t crcUnmask(uint32_t masked_crc) {
+  uint32_t rot = masked_crc - kMaskDelta;
+  return ((rot >> 17) | (rot << 15));
+}
+
 // Used to fetch a naturally-aligned 32-bit word in little endian byte-order
 static inline uint32_t LE_LOAD32(const uint8_t *p) {
   return decodeFixed32((const uint8_t*)p);

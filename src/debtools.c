@@ -1,9 +1,11 @@
 
 #include "debtools.h"
 
+inline void hexcase(int c);
+
 void printXstring(const unsigned char* str,size_t n)
 {
-	int i;
+	size_t i;
 	for(i = 0;i < n;i++){
 		printXchar(str[i]);
 	}
