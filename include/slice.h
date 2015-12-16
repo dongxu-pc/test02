@@ -21,7 +21,11 @@ inline int initSlice(Slice* slice,size_t len);
 
 int setSlice(Slice* pslice,unsigned char* data,size_t n);
 
+int freeSlice(Slice* slice);
+
 inline int resetSliceLength(Slice* slice,size_t n);
+
+int cpySlice(Slice* dst,const Slice* src);
 
 void showSlice(const Slice* pslice);
 

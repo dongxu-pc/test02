@@ -55,6 +55,7 @@ typedef struct {
 typedef struct{
 	Slice key_;
 	Slice value_;
+	uint8_t type;
 }BlockEntry;
 
 /*
@@ -81,11 +82,14 @@ int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle);
 inline int decodeBlockHandle(BlockHandle* blockHandle,const Slice* slice);
 int readAllBlock(sequentialFile* psFile,Block* blockArray,const Block* dataIndexBlock);
 inline size_t decodeBlockEntry(BlockEntry* blockEntry,const unsigned char* data,Slice* lastKey);
+inline int getBlockEntryKey(const unsigned char* data,Slice* key);
 
 //int decodeBlock(Block* pblock);
 inline int decodeBlock();
 void showBlock(const Block* block);
 void showBlockEntry(const BlockEntry* blockEntry);
+void showIndexBlockEntry(const BlockEntry* blockEntry);
 inline int initBlockEntry(BlockEntry* blockEntry);
+inline int freeBlockEntry(BlockEntry* blockEntry);
 
 #endif

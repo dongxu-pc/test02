@@ -13,6 +13,7 @@
 #include "c.h"
 #include "table.h"
 #include "block.h"
+#include "dbase.h"
 
 #include "debtools.h"
 
@@ -27,15 +28,26 @@ int main()
 		return 1;
 	}
 	unsigned char a[] = "src.ldb";
+	
+	unsigned char b[] = "1-959-250-4279";
+	//"1-114-560-9305";
+	
 	Slice filename;
-	initSlice(&filename,10);
-	Slice lastKey;
-	initSlice(&lastKey,20);
+	Slice lastKey;/* 用于存储最后一次读取到的key */
+	Slice srckey; /* 存储要查找、删除、修改、添加的key */
+	DBhandle dbhandle;
+	
 	Footer footer;
 	Block dataIndexBlock;
 	Block* blockArray;
 	BlockEntry blockEntry;
+	
+	initSlice(&filename,10);
+	initSlice(&lastKey,20);
 	initBlockEntry(&blockEntry);
+	initDBhandle(&dbhandle);
+	setSlice(&dbhandle.key_,b,22);
+
 	
 	setSlice(&filename,a,strlen((char*)a));
 	sequentialFile* psFile = (sequentialFile*)malloc(sizeof(sequentialFile));
@@ -54,18 +66,29 @@ int main()
 		return 1;
 	}
 	readAllBlock(psFile,blockArray,&dataIndexBlock);
+
+	/*设置操作为Read*/
+	dbhandle.type = 1;	
+	dbcmd(blockArray,&dataIndexBlock,&dbhandle);
+	
+	/* 
+	 * 至此，所有的block都已经读取到内存中,data block的内容存储在blockarray中，
+	 * data block的索引信息存储在dataIndexBlock中 
+	 */
+	
+	/*
+	 * 
+	 */
+	 //showBlokRestart(&dataIndexBlock);
+	 
 	
 	for(i = 0;i < dataIndexBlock.restartNum;i++){
-		offset = 0;
-		lastKey.size_ = 0;
-		do{
-			if(0 == readBlockEntry(&(blockArray[i]),&blockEntry,&offset,&lastKey))
-			    break;
-			printf("offset=%zd  ",offset);
-			showBlockEntry(&blockEntry);
-		}while(offset < blockArray[i].restart_offset);
+		//showBlockData(&(blockArray[i]));
 	}
 	
+	
+	freeBlockEntry(&blockEntry);
+	freeDBhandle(&dbhandle);
 	fclose(fp); 
 	printf("Hello World!\n");
 

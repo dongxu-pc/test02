@@ -10,6 +10,7 @@
 #include "stdint.h"
 #include "stddef.h"
 #include "assert.h"
+#include "string.h"
 
 #include "table.h"
 #include "env.h"
@@ -41,6 +42,7 @@ int readFooter(sequentialFile* psFile,Footer* pfooter)
 	for(i = 0;i < 48;i++){
 		printXchar(r.data_[i]);
 	}
+	freeSlice(&r);
 	printf("file size = %ld,footersize = %zd\n",filesize,r.size_);
 	return 0;
 }
@@ -92,20 +94,13 @@ void showFooter(const Footer* pfooter)
  */
 int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle)
 {
-	//char str_crc[];
 	//printf("Read Block,offset %llu,size %llu\n",blockHandle.offset_,blockHandle.size_);
-	Slice r;
-	initSlice(&r,20);
 	uint32_t i;
 	block->data_ = (unsigned char*) malloc(blockHandle.size_);
 	assert(block->data_);
 	
 	readSFile(blockHandle.size_+5,blockHandle.offset_,psFile,block->data_);
-	//printf("Read Block,offset %llu,size %llu\n",blockHandle.offset_,blockHandle.size_);
-	setSlice(&r,block->data_,blockHandle.size_);
-	
 	block->size_ = blockHandle.size_;
-	//printXstring(r.data_,blockHandle.size_+5);
 
 	checkBlockCrc32(block->data_,blockHandle.size_+5);
 	
@@ -117,7 +112,6 @@ int readBlock(sequentialFile* psFile,Block* block,BlockHandle blockHandle)
 	for(i = 0;i < block->restartNum;i++){
 		block->restart_[i] = decodeFixed32((unsigned char*)(block->data_ + block->restart_offset + 4*i));
 	}
-	
 	//printf("Read Block\n");
 	
 	return 0;
@@ -148,7 +142,8 @@ int readAllBlock(sequentialFile* psFile,Block* blockArray,const Block* dataIndex
 		readBlock(psFile,&blockArray[i],blockHandle);
 		//showBlock(&blockArray[i]);
 	}
-	
+	freeBlockEntry(&blockEntry);
+	freeSlice(&lastKey);
 	return 0;
 }
 
@@ -158,7 +153,7 @@ int readAllBlock(sequentialFile* psFile,Block* blockArray,const Block* dataIndex
 inline size_t decodeBlockEntry(BlockEntry* blockEntry,const unsigned char* data,Slice* lastKey)
 {
 	size_t offset = 0;
-	uint64_t i = 0;
+	//uint64_t i = 0;
 	uint64_t sharedKeyLen = decodeVarint(data,&offset);
 	uint64_t nosharedKeyLen = decodeVarint(data,&offset);
 	uint64_t valueLen = decodeVarint(data,&offset);
@@ -173,32 +168,47 @@ inline size_t decodeBlockEntry(BlockEntry* blockEntry,const unsigned char* data,
 	blockEntry->key_.size_ = sharedKeyLen + nosharedKeyLen;
 	resetSliceLength(&blockEntry->key_,blockEntry->key_.size_);
 	
-	for(i = 0;i < sharedKeyLen;i++){
-		blockEntry->key_.data_[i] = lastKey->data_[i];
-	}
-	for(;i < blockEntry->key_.size_;i++,offset++){
-		blockEntry->key_.data_[i] = *(data+offset);
-	}
+	memcpy(blockEntry->key_.data_,lastKey->data_,sharedKeyLen);
+	memcpy(blockEntry->key_.data_+sharedKeyLen,data+offset,nosharedKeyLen);
+	offset += nosharedKeyLen;
 	
 	/* 更新lastkey */
 	resetSliceLength(lastKey,blockEntry->key_.size_);
 	lastKey->size_ = blockEntry->key_.size_;
-	for(i = 0;i < blockEntry->key_.size_;i++){
-		lastKey->data_[i] = blockEntry->key_.data_[i];
-	}
+	memcpy(lastKey->data_,blockEntry->key_.data_,blockEntry->key_.size_);
 	
 	/*读取value*/
 	blockEntry->value_.size_ = valueLen;
 	resetSliceLength(&blockEntry->value_,valueLen);
-	for(i = 0;i < valueLen;i++,offset++){
-		blockEntry->value_.data_[i] = *(data+offset);
-	}
+	memcpy(blockEntry->value_.data_,data+offset,valueLen);
+	offset+=valueLen;
 
-	
 	//showIndexBlockEntry(blockEntry);
 	/* 返回此blockEntry占用的字节数 */
 	return offset;
 	
+}
+
+/*
+ * 获取重启点的key值
+ */
+inline int getBlockEntryKey(const unsigned char* data,Slice* key)
+{
+	size_t offset = 0;
+	//uint64_t i = 0;
+	uint64_t sharedKeyLen = decodeVarint(data,&offset);
+	uint64_t nosharedKeyLen = decodeVarint(data,&offset);
+	uint64_t valueLen = decodeVarint(data,&offset);
+	printf("sharedKeyLen(%lu),nosharedKeyLen(%lu),valueLen(%lu).\n",sharedKeyLen,nosharedKeyLen,valueLen);
+	if(sharedKeyLen > 0 && key->size_ == 0){
+		printf("error:This is not a restart point.\n");
+		return 0;
+	}
+	resetSliceLength(key,nosharedKeyLen);
+	memcpy(key->data_,data+offset,nosharedKeyLen);
+	key->size_ = nosharedKeyLen;
+	
+	return 1;
 }
 
 /*
@@ -283,6 +293,14 @@ inline int initBlockEntry(BlockEntry* blockEntry)
 {
 	initSlice(&blockEntry->key_,20);
 	initSlice(&blockEntry->value_,20);
+	
+	return 1;
+}
+
+inline int freeBlockEntry(BlockEntry* blockEntry)
+{
+	freeSlice(&blockEntry->key_);
+	freeSlice(&blockEntry->value_);
 	
 	return 1;
 }

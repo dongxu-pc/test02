@@ -29,6 +29,37 @@ inline uint64_t decodeVarint(const unsigned char* ptr,size_t* offset)
 	return value;
 }
 
+
+inline size_t decodeVarint32(const unsigned char* ptr,uint32_t* value)
+{
+	size_t i = 0;
+	*value = 0;
+	for(i = 0;i < 4;i++){
+		if((ptr[i] & 0x80) != 0x80)
+			break;
+		value += ((uint32_t)(ptr[i]&0x7F)) << (7*i);	
+	}
+	assert(i < 4);
+	value += ((uint32_t)(ptr[i]&0x7F)) << (7*i);
+	
+	return i;/* 返回这个整数所占用的字节数 */
+}
+
+inline size_t decodeVarint64(const unsigned char* ptr,uint64_t* value)
+{
+	size_t i = 0;
+	*value = 0;
+	for(i = 0;i < 8;i++){
+		if((ptr[i] & 0x80) != 0x80)
+			break;
+		value += ((uint64_t)(ptr[i]&0x7F)) << (7*i);	
+	}
+	assert(i < 8);
+	value += ((uint64_t)(ptr[i]&0x7F)) << (7*i);
+	
+	return i;/* 返回这个整数所占用的字节数 */
+}
+
 inline uint64_t  varToint64(varint* vint)
 {
 	uint64_t value = 0;
@@ -43,6 +74,73 @@ inline uint64_t  varToint64(varint* vint)
 	vint->size_++;
 	
 	return value;
+}
+
+
+inline size_t getVarint32Size(uint32_t value)
+{
+	/* 7,14,21,28,35 */
+	if(value < 0x7F)
+		return 1;
+	else if(value < 0x3FFF)
+		return 2;
+	else if(value < 0x1FFFFF)
+		return 3;
+	else if(value < 0xFFFFFFF)
+		return 4;
+	else if(value < 0xFFFFFFFF)
+		return 5;
+	else
+		return 0;/* 错误 */
+}
+
+inline size_t getVarint64Size(uint64_t value)
+{
+	/* 7,14,21,28,35,42,49,56,63,70 */
+	if(value < 0x7F)
+		return 1;
+	else if(value < 0x3FFF)
+		return 2;
+	else if(value < 0x1FFFFF)
+		return 3;
+	else if(value < 0xFFFFFFF)
+		return 4;
+	else if(value < 0x7FFFFFFFF)
+		return 5;
+	else if(value < 0x3FFFFFFFFFF)
+		return 6;
+	else if(value < 0x1FFFFFFFFFFFF)
+		return 7;
+	else if(value < 0xFFFFFFFFFFFFFF)
+		return 8;
+	else if(value < 0x7FFFFFFFFFFFFFFF)
+		return 9;
+	else if(value < 0xFFFFFFFFFFFFFFFF)
+		return 10;
+	else
+		return 0;/* 错误 */
+}
+
+inline size_t encodeVarint32(unsigned char* ptr,uint32_t value)
+{
+	size_t size = getVarint32Size(value);
+	size_t i = 0;
+	if(ptr == NULL)
+		ptr = (unsigned char*)malloc(size);
+	assert(ptr);
+	for(i = 0;i < size;i++){
+		                                                       
+	}
+	
+}
+
+inline size_t encodeVarint64(unsigned char* ptr,uint64_t value)；
+
+
+
+inline uint64_t uint64Tovarint(varint* vint,uint64_t in)
+{
+	
 }
 
 inline uint32_t decodeFixed32(const unsigned char* ptr)
@@ -87,4 +185,11 @@ void putFixed32(unsigned char* dst,uint32_t value)
 	if(dst == NULL)
 	    dst = (unsigned char*)malloc(4);
 	encodeFixed32(dst,value);
+}
+
+void putFixed64(unsigned char* dst,uint64_t value)
+{
+	if(dst == NULL)
+		dst = (unsigned char*)malloc(8);
+	encodeFixed64(dst,value);
 }

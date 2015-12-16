@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "assert.h"
+#include "string.h"
 
 #include "slice.h"
 
@@ -20,12 +21,10 @@ inline int initSlice(Slice* slice,size_t len)
 
 int setSlice(Slice* pslice,unsigned char* data,size_t n)
 {
-    size_t i = 0;
+    
     if(n <= pslice->length){
-        for(i = 0;i < n;i++)
-            pslice->data_[i] = data[i];
+        memcpy(pslice->data_,data,n);
         pslice->size_ = n;
-        
         return n;
     }
 
@@ -37,11 +36,43 @@ int setSlice(Slice* pslice,unsigned char* data,size_t n)
     pslice->data_ = (unsigned char*)malloc(n);
     assert(pslice->data_);
     pslice->length = n;
-    for(i = 0;i < n;i++)
-        pslice->data_[i] = data[i];
+    memcpy(pslice->data_,data,n);
     pslice->size_ = n;
 
     return n;
+}
+
+int cpySlice(Slice* dst,const Slice* src)
+{
+    if(src->size_ <= dst->length){
+        memcpy(dst->data_,src->data_,src->size_);
+        dst->size_ = src->size_;
+        return src->size_;
+    }
+
+    if(dst->data_ != NULL)
+        free(dst->data_);
+    else
+        printf("resetSlice NULL\n");
+        
+    dst->data_ = (unsigned char*)malloc(src->size_);
+    assert(dst->data_);
+    dst->length = src->size_;
+
+    memcpy(dst->data_,src->data_,src->size_);
+    dst->size_ = src->size_;
+
+    return src->size_;
+}
+
+int freeSlice(Slice* slice)
+{
+    if(slice->data_ != NULL)
+        free(slice->data_);
+    else
+        printf("resetSlice NULL\n");
+        
+    return slice->length;
 }
 
 int resetSliceLength(Slice* slice,size_t n)
