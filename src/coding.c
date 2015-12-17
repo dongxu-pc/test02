@@ -125,23 +125,32 @@ inline size_t encodeVarint32(unsigned char* ptr,uint32_t value)
 {
 	size_t size = getVarint32Size(value);
 	size_t i = 0;
+	const int B = 128;
 	if(ptr == NULL)
 		ptr = (unsigned char*)malloc(size);
 	assert(ptr);
 	for(i = 0;i < size;i++){
-		                                                       
+		ptr[i] = (value>>(7*i)) | B;/*将全部的首位都置为1*/
 	}
-	
+	ptr[i] = ptr[i] & 0x7F;/*将最后一个字节的首位置为0*/
+	return size;
 }
 
-inline size_t encodeVarint64(unsigned char* ptr,uint64_t value)；
-
-
-
-inline uint64_t uint64Tovarint(varint* vint,uint64_t in)
+inline size_t encodeVarint64(unsigned char* ptr,uint64_t value)
 {
-	
+	size_t size = getVarint64Size(value);
+	const int B = 128;
+	if(ptr == NULL)
+		ptr = (unsigned char*)malloc(size);
+	assert(ptr);
+	while(value >= B){/*将全部的非首位数值都置为1*/
+		*(ptr++) = (value & 0x7F) | B;
+		value >>= 7;
+	}
+	*(ptr++) = (unsigned char) value;/*设置最后一位的数值，首位为0*/
+	return size;	
 }
+
 
 inline uint32_t decodeFixed32(const unsigned char* ptr)
 {

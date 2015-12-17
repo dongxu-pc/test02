@@ -141,6 +141,7 @@ int putKV(Block* blockArray,Block* dataIndexBlock,DBhandle* dbhandle)
 int deleteKV(Block* blockArray,Block* dataIndexBlock,DBhandle* dbhandle)
 {
 	uint64_t block = 0,i = 0,size = 0;
+	size_t offset = 0;
 	unsigned char* tmp;
 	unsigned char* tmp1;
 	uint32_t* restart;
@@ -155,15 +156,18 @@ int deleteKV(Block* blockArray,Block* dataIndexBlock,DBhandle* dbhandle)
 	showKey(&dbhandle->key_);
 	blockFix(&block,dataIndexBlock,&dbhandle->key_);/* 获取key应该在哪一个block中 */
 	printf("Block Fixed,block(%zd).\n",block);
-	segmentFix(&segment,&blockArray[block],&dbhandle->key_)；/* 获取key应该在block中的哪一个restart段中 */
+	segmentFix(&segment,&blockArray[block],&dbhandle->key_);/* 获取key应该在block中的哪一个restart段中 */
 	printf("Segment Fixed,offset=%u,size_=%u.\n",segment.start_,segment.size_);
 	offset = scanSegment(&blockArray[block],&segment,dbhandle);/* 获取key应该在段中的偏移量(作为返回值)，病取出该项 *//* 此处offset为在restart段中的偏移量 */
 	if(1 != offset){/* 定位成功，该block中含有该值 */
-		tmp = blockArray[block].data_+segment.start_+offset;
+		/* 获取当前项和下一项的信息，分别记录在prekey和nextkey中 */
+		tmp = blockArray[block].data_+segment.start_+offset;/* tmp记录当前项的位置 */
 		getBlockEntryInfo(tmp,&prekey);
-		tmp1 = tmp+prekey.entrysize;
+		tmp1 = tmp+prekey.entrysize;/* tmp1记录下一项的位置 */
 		getBlockEntryInfo(tmp1,&nextkey);
-		if(prekey.sharedkeylen >= nextkey.sharedkeylen){/*  */
+		
+		if(prekey.sharedkeylen >= nextkey.sharedkeylen){
+			/* 删除当前项不影响下一项的内容，则只需将其后的所有内容前移即可，同时修改block中start的内容 */
 			size = blockArray[i].restart_offset-prekey.entrysize-segment.start_-offset;
 			for(i = 0;i < size;i++){
 				tmp[i] = tmp1[i];
@@ -179,8 +183,11 @@ int deleteKV(Block* blockArray,Block* dataIndexBlock,DBhandle* dbhandle)
 			}
 			
 		}else{
+			/* 此时删除当前项对其下一项的非共享key有影响，故需要对下一项的内容做出修改 */
 			size = blockArray[i].restart_offset-prekey.entrysize-segment.start_-offset;
-			
+			encodeVarint32(tmp,prekey.sharedkeylen);
+			encodeVarint32(tmp,nextkey.nosharedkey.size_+nextkey.sharedkeylen-prekey.sharedkeylen);
+			encodeVarint32(tmp,nextkey.value)
 		}
 		
 	}else{

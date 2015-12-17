@@ -17,12 +17,13 @@ typedef struct{
 } varint;
 
 
-inline uint64_t  varToint64(varint* vint);
-
 /*
  * 解析变长整数
  *
  */
+
+inline uint64_t  varToint64(varint* vint);
+ 
 inline uint64_t decodeVarint(const unsigned char* ptr,size_t* offset);
 
 inline size_t decodeVarint32(const unsigned char* ptr,uint32_t* value);

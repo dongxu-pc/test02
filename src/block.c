@@ -29,23 +29,26 @@ size_t readBlockEntry(const Block* block,BlockEntry* blockEntry,size_t* offset,S
 	return 0;
 }
 
-int getBlockEntryInfo(const unsigned char* data,Entrykey* entrykey)
+uint32_t getBlockEntryInfo(const unsigned char* data,Entrykey* entrykey)
 {
 	size_t offset = 0;
 	//uint64_t i = 0;
-	uint64_t sharedKeyLen = decodeVarint(data,&offset);
-	uint64_t nosharedKeyLen = decodeVarint(data,&offset);
-	uint64_t valueLen = decodeVarint(data,&offset);
+	uint32_t sharedKeyLen = decodeVarint32(data,&offset);
+	uint32_t nosharedKeyLen = decodeVarint32(data,&offset);
+	uint32_t valueLen = decodeVarint32(data,&offset);
 	if(entrykey->nosharedkey.data_ == NULL){
 		entrykey->nosharedkey.data_ = (unsigned char*)malloc(nosharedKeyLen);
 		assert(entrykey->nosharedkey.data_);
 		entrykey->nosharedkey.length = nosharedKeyLen;
 		memcpy(entrykey->nosharedkey.data_,data+offset,nosharedKeyLen);
 		entrykey->nosharedkey.size_ = nosharedKeyLen;
+		entrykey->offset = offset;
+		return valueLen;
 	}
 	setSlice(&entrykey->nosharedkey,data+offset,nosharedKeyLen);
 	entrykey->entrysize = offset+nosharedKeyLen+valueLen;
 	entrykey->sharedkeylen = sharedKeyLen;
+	entrykey->offset = offset;
 	
 	return valueLen;
 }

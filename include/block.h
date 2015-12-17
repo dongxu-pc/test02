@@ -32,6 +32,7 @@ typedef struct {
 typedef struct{
 	uint32_t sharedkeylen;/* 记录key的共享部分的长度 */
 	uint32_t entrysize;/* 记录kv项的总长度 */
+	uint32_t offset;/* 记录nosharedkey的偏移量，即sharedkeylen，nosharedkey len，valuelen的总长度 */
 	Slice nosharedkey;/* key非共享部分的内容 */
 } Entrykey;
 
