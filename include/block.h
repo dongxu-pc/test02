@@ -44,7 +44,7 @@ uint32_t scanSegment(const Block* block,const Segment* segment,DBhandle* dbhandl
 int segmentFix(Segment* segment,const Block* block,const Slice* key);
 
 /* 获取数据项的非共享键，和整个kv项的长度,共享键的长度 */
-int getBlockEntryInfo(const unsigned char* data,Entrykey* entrykey);
+uint32_t getBlockEntryInfo(const unsigned char* data,Entrykey* entrykey);
 
 void initEntrykey(Entrykey* entrykey);
 void freeEntrykey(Entrykey* entrykey);

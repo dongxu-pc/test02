@@ -62,14 +62,14 @@ inline size_t appendKey(const KeySeq* keyseq,Slice* key)
 }
 
 
-inline size_t encodePrefix(const Slice* prekey,Slice* key,uint64_t sharedlen)
+inline size_t encodePrefix(const Slice* prekey,Slice* key,uint32_t sharedlen)
 {
 	size_t offset = 0;
 	//uint64_t i = 0;
-	uint64_t sharedKeyLen = decodeVarint(key->data_,&offset);
-	uint64_t nosharedKeyLen = decodeVarint(key->data_,&offset);
-	uint64_t valueLen = decodeVarint(key->data_,&offset);
-	uint64_t i = 0;
+	uint32_t sharedKeyLen = decodeVarint32(key->data_,&offset);
+	uint32_t nosharedKeyLen = decodeVarint32(key->data_,&offset);
+	uint32_t valueLen = decodeVarint32(key->data_,&offset);
+	uint32_t i = 0;
 	if(sharedKeyLen <= sharedlen){
 		return sharedlen;
 	}else{

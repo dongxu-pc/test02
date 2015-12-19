@@ -168,6 +168,7 @@ int deleteKV(Block* blockArray,Block* dataIndexBlock,DBhandle* dbhandle)
 		
 		if(prekey.sharedkeylen >= nextkey.sharedkeylen){
 			/* 删除当前项不影响下一项的内容，则只需将其后的所有内容前移即可，同时修改block中start的内容 */
+			/*
 			size = blockArray[i].restart_offset-prekey.entrysize-segment.start_-offset;
 			for(i = 0;i < size;i++){
 				tmp[i] = tmp1[i];
@@ -180,14 +181,17 @@ int deleteKV(Block* blockArray,Block* dataIndexBlock,DBhandle* dbhandle)
 				else{
 					restart[i] = blockArray[block].restart_[i]-prekey.entrysize;
 				}
-			}
+			}*/
 			
 		}else{
 			/* 此时删除当前项对其下一项的非共享key有影响，故需要对下一项的内容做出修改 */
+			/*
 			size = blockArray[i].restart_offset-prekey.entrysize-segment.start_-offset;
 			encodeVarint32(tmp,prekey.sharedkeylen);
 			encodeVarint32(tmp,nextkey.nosharedkey.size_+nextkey.sharedkeylen-prekey.sharedkeylen);
-			encodeVarint32(tmp,nextkey.value)
+			encodeVarint32(tmp,nextkey.value);
+			for(i = 0;i < blockArray[b)
+			*/
 		}
 		
 	}else{
